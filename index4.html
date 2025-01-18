@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Клацалка з Таймером</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #game-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+
+        #score-board,
+        #timer {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        #start-timer-button {
+            background-color: #FF9800;
+        }
+
+        #standard-mode-button {
+            background-color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Клацай на кнопку!</h1>
+        <button id="clickButton">Клацни мене!</button>
+        <div id="score-board">Очки: 0</div>
+        <div id="timer">Час: 0</div>
+        <button id="start-timer-button">Запустити 20-секундний таймер</button>
+        <button id="standard-mode-button" style="display: none;">Перейти в стандартний режим</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let timeLeft = 0;  // Час в режимах
+        let timer;
+        let isGameOver = false;
+        let standardMode = false; // Чи перебуває гравець в стандартному режимі
+
+        const scoreBoard = document.getElementById("score-board");
+        const timerDisplay = document.getElementById("timer");
+        const clickButton = document.getElementById("clickButton");
+        const startTimerButton = document.getElementById("start-timer-button");
+        const standardModeButton = document.getElementById("standard-mode-button");
+
+        // Функція для початку гри в стандартному режимі
+        function startStandardMode() {
+            score = 0;
+            timeLeft = 0;
+            standardMode = true;
+            scoreBoard.textContent = `Очки: ${score}`;
+            timerDisplay.textContent = `Час: ${timeLeft}`;
+            clickButton.disabled = false;
+            standardModeButton.style.display = "none";  // Ховаємо кнопку
+            startTimerButton.disabled = false;  // Знову дозволяємо запуск таймера
+        }
+
+        // Функція для запуску 20-секундного таймера
+        function startTimer() {
+            clickButton.disabled = false;
+            standardMode = false;
+            timeLeft = 20;
+            score = 0;
+            scoreBoard.textContent = `Очки: ${score}`;
+            timerDisplay.textContent = `Час: ${timeLeft}`;
+
+            startTimerButton.disabled = true;  // Вимикаємо кнопку для старту таймера
+
+            timer = setInterval(function() {
+                timeLeft--;
+                timerDisplay.textContent = `Час: ${timeLeft}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    standardModeButton.style.display = "block";  // Показуємо кнопку для переходу в стандартний режим
+                    clickButton.disabled = true;  // Вимикаємо кнопку
+                    alert("Час вичерпано! Ваші очки: " + score);
+                }
+            }, 1000);
+        }
+
+        // Обробник події для кнопки клікання
+        clickButton.addEventListener("click", function() {
+            if (!isGameOver) {
+                score++;
+                scoreBoard.textContent = `Очки: ${score}`;
+            }
+        });
+
+        // Запуск таймера на 20 секунд
+        startTimerButton.addEventListener("click", startTimer);
+
+        // Перехід в стандартний режим після закінчення таймера
+        standardModeButton.addEventListener("click", startStandardMode);
+
+        // Початкова налаштування гри
+        window.onload = function() {
+            clickButton.disabled = true;
+            standardModeButton.style.display = "none";  // Кнопка для стандартного режиму з'являється після таймера
+            startTimerButton.disabled = false;  // Дозволяємо старт таймера при завантаженні
+        };
+    </script>
+</body>
+</html>
+
